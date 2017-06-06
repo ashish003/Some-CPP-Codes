@@ -20,7 +20,7 @@ class AVLTree
     TreeNode *root;
 
     TreeNode* insertUtility(TreeNode*, int);
-    TreeNode* deleteUtility(TreeNode*, int);
+    TreeNode* deleteUtility(TreeNode*, int, int*);
     void searchUtility(TreeNode*, int);
     void preOrderUtility(TreeNode*);
     void postOrderUtility(TreeNode*);
@@ -131,6 +131,10 @@ TreeNode* AVLTree::insertUtility(TreeNode* node, int data)
     {
         TreeNode *temp=NULL;
         temp=new TreeNode(data);
+        if(temp==NULL)
+        cout<<"Memory error: Key can't be inserted in AVL tree.\n";
+        else
+        cout<<"Key "<<data<<" is inserted in AVL tree.\n";
         return temp;
     }
 
@@ -190,17 +194,18 @@ int AVLTree::getMinValue(TreeNode* node)
     return current->key;
 }
 
-TreeNode* AVLTree::deleteUtility(TreeNode* node, int data)
+TreeNode* AVLTree::deleteUtility(TreeNode* node, int data, int *fl)
 {
     if(node==NULL)
     return node;
 
     if(node->key > data)
-    node->left1=deleteUtility(node->left1, data);
+    node->left1=deleteUtility(node->left1, data, fl);
     else if(node->key < data)
-    node->right1=deleteUtility(node->right1, data);
+    node->right1=deleteUtility(node->right1, data, fl);
     else
     {
+        *fl=1;
         if(node->left1==NULL && node->right1==NULL)
         {
             TreeNode* temp=node;
@@ -223,7 +228,7 @@ TreeNode* AVLTree::deleteUtility(TreeNode* node, int data)
         {
             int min1=getMinValue(node->right1);
             node->key=min1;
-            node->right1=deleteUtility(node->right1, min1);
+            node->right1=deleteUtility(node->right1, min1, fl);
         }
     }
 
@@ -257,11 +262,16 @@ TreeNode* AVLTree::deleteUtility(TreeNode* node, int data)
 
 void AVLTree::delete1()
 {
-    int data;
-    cout<<"Enter the key to be inserted in AVL tree:\n";
+    int data, fl=0;
+    cout<<"Enter the key to be deleted in AVL tree:\n";
     cin>>data;
 
-    root=deleteUtility(root, data);
+    root=deleteUtility(root, data, &fl);
+
+    if(fl==0)
+    cout<<"Key "<<data<<" is not present in AVL tree.\n";
+    else
+    cout<<"Key "<<data<<" is deleted from AVL tree.\n";
 }
 
 void AVLTree::searchUtility(TreeNode* node, int data)
@@ -308,7 +318,9 @@ void AVLTree::preOrderUtility(TreeNode* node)
 
 void AVLTree::preOrder()
 {
+    cout<<"Preorder traversal:\n";
     preOrderUtility(root);
+    cout<<"\n";
 }
 
 void AVLTree::postOrderUtility(TreeNode* node)
@@ -323,7 +335,9 @@ void AVLTree::postOrderUtility(TreeNode* node)
 
 void AVLTree::postOrder()
 {
+    cout<<"Postorder traversal:\n";
     postOrderUtility(root);
+    cout<<"\n";
 }
 
 void AVLTree::inOrderUtility(TreeNode* node)
@@ -338,13 +352,21 @@ void AVLTree::inOrderUtility(TreeNode* node)
 
 void AVLTree::inOrder()
 {
+    cout<<"Inorder traversal:\n";
     inOrderUtility(root);
+    cout<<"\n";
 }
 
 int main()
 {
     AVLTree* myTree=NULL;
     myTree=new AVLTree;
+
+    if(myTree==NULL)
+    {
+        cout<<"\nMemory error!\n";
+        return 0;
+    }
     int input;
 
     do
